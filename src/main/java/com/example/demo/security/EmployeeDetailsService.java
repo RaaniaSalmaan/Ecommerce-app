@@ -1,8 +1,7 @@
 package com.example.demo.security;
 
-
-import com.example.demo.model.Employee;
-import com.example.demo.repository.EmployeeRepository;
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,21 +17,20 @@ import java.util.stream.Collectors;
 @Service
 public class EmployeeDetailsService implements UserDetailsService {
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Employee employee = employeeRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
 
-        Set<GrantedAuthority> authorities = employee.getRoles().stream()
-                .map(roles -> new SimpleGrantedAuthority(roles.getRoleName()))
-                .collect(Collectors.toSet());
+        Set<GrantedAuthority> authorities = Set.of(
+                new SimpleGrantedAuthority(user.getRoles().getRoleName()));
 
         return new org.springframework.security.core.userdetails.User(
                 username,
-                employee.getPassword(),
+                user.getPassword(),
                 authorities
         );
-
     }
+
 }

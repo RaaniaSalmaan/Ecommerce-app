@@ -16,7 +16,7 @@ public class Products {
         private int totalPrice;
         @ManyToOne
         @JoinColumn(name = "shop_id")// FK to Shops table
-        @JsonIgnoreProperties({"productList"})
+        @JsonIgnoreProperties({"productList","seller"})
         private Shops shop;
 
     public Shops getShop() {

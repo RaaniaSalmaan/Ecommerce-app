@@ -1,14 +1,13 @@
 package com.example.demo.controller;
-import com.example.demo.exceptions.priceFormatException;
-import com.example.demo.model.Products;
-import com.example.demo.exceptions.InvalidCategoryException;
 import com.example.demo.model.Shops;
 import com.example.demo.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class ShopController {
@@ -27,7 +26,9 @@ public class ShopController {
             return service.getShopById(shopid);
         }
     }
+
     @PostMapping("/addshop")
+    @PreAuthorize("hasRole('ROLE_SELLER')")
     public ResponseEntity addShop(@RequestBody Shops shop) {
         try {
             service.addShop(shop);
@@ -36,34 +37,25 @@ public class ShopController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ ERROR: " + e.getMessage());
         }
     }
-    @DeleteMapping("/deleteshop")
-    public void deleteshop(@RequestParam int shopid){
+    @DeleteMapping("/shop/{shopid}")
+    @PreAuthorize("hasRole('ROLE_SELLER')")
+    public void deleteshop(@PathVariable int shopid){
         service.deleteshop(shopid);
     }
- /*  @PostMapping("/{shopName}/add")
-    public ResponseEntity<String> addProduct(@PathVariable String shopName, @RequestBody Products product) throws Exception {
+    @PutMapping("/shops/{shopid}")
+    @PreAuthorize("hasRole('ROLE_SELLER')")
+    public ResponseEntity updateshop(@PathVariable int  shopid, @RequestBody Shops shops){
+        try{
+        service.updateshop(shopid,shops);
 
-        try {
-            service.addProduct(shopName, product);
-
-            return ResponseEntity.ok("✅ Product added successfully");
-        }
-        catch (InvalidCategoryException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Error: " + e.getMessage());
-        }
-        catch (RuntimeException ex){
-             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Error: " + ex.getMessage());
+            return ResponseEntity.ok("✅ Shop updated successfully!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ ERROR: " + e.getMessage());
         }
     }
-    @PutMapping("/{shopName}/update")
-    public void updateProduct(@PathVariable String shopName, @RequestBody Products product) {
-
-         service.updateProduct(shopName, product);
+    @GetMapping("/shops/my")
+    @PreAuthorize("hasRole('ROLE_SELLER')")
+    public List<Shops> myshops(){
+        return service.myshop();
     }
-    @DeleteMapping("/{shopName}/delete")
-    public void deleteProduct(@PathVariable String shopName, @RequestParam int id) {
-        service.deleteProduct(shopName, id);
-    }
-
-  */
 }

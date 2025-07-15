@@ -3,9 +3,13 @@ package com.example.demo.service;
 import com.example.demo.exceptions.InvalidCategoryException;
 import com.example.demo.model.Products;
 import com.example.demo.model.Shops;
+import com.example.demo.model.User;
 import com.example.demo.repository.ProductsRepository;
 import com.example.demo.repository.ShopsRepository;
+import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -15,22 +19,23 @@ public class ShopService {
     Optional<Shops> s;
     @Autowired
     private ShopsRepository shopRepository;
-
     @Autowired
     private ProductsRepository productsRepository;
+     @Autowired
+     private UserRepository userRepository;
 
-    // Add a new shop
     public void addShop(Shops shop) {
         shopRepository.save(shop);
     }
+
     public void deleteshop(int id){
         shopRepository.deleteById(id);
     }
-    // Get all shops
+
     public List<Shops> getAllShops() {
         return (List<Shops>) shopRepository.findAll();
     }
-    // Get shop by name
+
     public Shops getShopByName(String name) {
         List<Shops> s= (List<Shops>) shopRepository.findAll();
         for (Shops shop : s){
@@ -40,7 +45,6 @@ public class ShopService {
         return null;
     }
 
-    // Get shop by ID
     public Optional<Shops> getShopById(int id) {
         s = shopRepository.findById(id);
         if (s != null) {
@@ -51,37 +55,25 @@ public class ShopService {
         }
     }
 
-  /* public void addProduct(String shopName, Products p) throws Exception {
-        if (p.getCategory() == null) {
-            throw new InvalidCategoryException("Category can't be null");
+    public Shops updateshop(int shopid, Shops shops) {
+        s = shopRepository.findById(shopid);
 
-        }
-        if (p.getPrice() <= 200) {
-            throw new RuntimeException("Price must be greater than 200");
-        }
-        Shops s = getShopByName(shopName);
-       productsRepository.save(p);
-
-
-    }
-
-    public void deleteProduct(String shopName, int productId) {
-        Shops s = getShopByName(shopName);
-        if (s != null){
-            productsRepository.deleteById(productId);
+        if (s.isPresent()) {
+            Shops shop = s.get();
+            shop.setName(shops.getName());
+            return shopRepository.save(shop);
+        } else {
+            throw new RuntimeException("Shop not found");
         }
     }
 
-    public void updateProduct(String shopName, Products updatedProduct) {
-        Shops s = getShopByName(shopName);
-        for (Products p : s.getProductList()) {
-            if (p.getId() == updatedProduct.getId()) {
-                p.setName(updatedProduct.getName());
-                p.setPrice(updatedProduct.getPrice());
-            }
-        }
+    public List<Shops> myshop() {
+        Authentication authenticate = SecurityContextHolder.getContext().getAuthentication();
+        String name = authenticate.getName();
+        User seller = userRepository.findByUsername(name);
+        return shopRepository.findBySeller(seller);
     }
 
-*/
+
 }
 

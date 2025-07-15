@@ -12,8 +12,8 @@ public class Roles {
     private int id;
     private String roleName;
 
-   @ManyToMany(mappedBy = "roles")
-   private Set<Employee> employees = new HashSet<>();
+   @OneToMany(mappedBy = "roles")
+   private Set<User> users = new HashSet<>();
 
    public Roles() {
     }

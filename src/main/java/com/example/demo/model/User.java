@@ -1,39 +1,51 @@
 package com.example.demo.model;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-public class Employee {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String name;
+    @JsonIgnore
     private String phoneNumber;
+    @JsonIgnore
     private String password;
+    @JsonIgnore
     private String username;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "employee_roles",
-            joinColumns = @JoinColumn(name = "employee_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
-    )
-    private Set<Roles> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "seller")
+    @JsonIgnore
+    private List<Shops> shops;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Roles roles;
 
 
-    public Employee(int id, String name, String phoneNumber, String password, String username, Set<Roles> roles) {
+    public User(int id, String name, String phoneNumber, String password, String username, Roles roles,List<Shops> shops) {
         this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.roles = roles;
         this.password = password;
         this.username = username;
+        this.shops= shops;
     }
 
-    public Employee() {
+    public User() {
+    }
+
+    public List<Shops> getShops() {
+        return shops;
+    }
+
+    public void setShops(List<Shops> shops) {
+        this.shops = shops;
     }
 
     public String getPassword() {
@@ -76,11 +88,11 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
-    public Set<Roles> getRoles() {
+    public Roles getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Roles> roles) {
+    public void setRoles(Roles roles) {
         this.roles = roles;
     }
 
