@@ -61,6 +61,7 @@ public class ShopService {
         if (s.isPresent()) {
             Shops shop = s.get();
             shop.setName(shops.getName());
+            shop.setSeller(shops.getSeller());
             return shopRepository.save(shop);
         } else {
             throw new RuntimeException("Shop not found");

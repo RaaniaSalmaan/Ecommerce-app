@@ -2,6 +2,7 @@ package com.example.demo.controller;
 import com.example.demo.exceptions.InvalidCategoryException;
 import com.example.demo.model.Products;
 import com.example.demo.service.ProductService;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +13,10 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     @Autowired     // to link this class with ProductService class (field dependency injection)
     ProductService service;
-
+    @Autowired
+    UserService userService;
     @GetMapping("/products")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
+
     public Object getAllProducts() {
         return service.getAllProducts();
     }
@@ -34,6 +36,7 @@ public class ProductController {
     @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_SELLER')")
     public ResponseEntity<String> addProduct(@RequestBody Products pro) throws Exception {
+          userService.sessionCheck();
         try {
             service.addProduct(pro);
 
@@ -43,23 +46,26 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{id}") //change this endpoint
     @PreAuthorize("hasRole('ROLE_SELLER')")
-    public void deleteProduct(@RequestParam int id){
+    public void deleteProduct(@PathVariable int id){
+        userService.sessionCheck();
         service.deleteProduct(id);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update") // change this end point
     @PreAuthorize("hasRole('ROLE_SELLER')")
     public void updateProduct(@RequestBody Products pro){
+
+        userService.sessionCheck();
         service.updateProduct(pro);
     }
 
-    //gives us list of products having price < pricelimit
    @GetMapping("/productbyprice")
    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public Object checkprice(@RequestParam int pricelimit){
-       return  service.checkprice(pricelimit);
+      userService.sessionCheck();
+        return  service.checkprice(pricelimit);
    }
 
 

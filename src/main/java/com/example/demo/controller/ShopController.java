@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 import com.example.demo.model.Shops;
 import com.example.demo.service.ShopService;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,8 @@ import java.util.List;
 public class ShopController {
     @Autowired // field injection , linking this class with ShopService
     ShopService service;
+    @Autowired
+    UserService userService;
 
     @GetMapping("/shops")
     public Object getshops(@RequestParam(required = false) String shopname,@RequestParam(required = false) Integer shopid){
@@ -30,8 +33,10 @@ public class ShopController {
     @PostMapping("/addshop")
     @PreAuthorize("hasRole('ROLE_SELLER')")
     public ResponseEntity addShop(@RequestBody Shops shop) {
+        userService.sessionCheck();
         try {
             service.addShop(shop);
+
             return ResponseEntity.ok("✅ Shop added successfully!");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ ERROR: " + e.getMessage());
@@ -40,11 +45,13 @@ public class ShopController {
     @DeleteMapping("/shop/{shopid}")
     @PreAuthorize("hasRole('ROLE_SELLER')")
     public void deleteshop(@PathVariable int shopid){
+        userService.sessionCheck();
         service.deleteshop(shopid);
     }
     @PutMapping("/shops/{shopid}")
     @PreAuthorize("hasRole('ROLE_SELLER')")
     public ResponseEntity updateshop(@PathVariable int  shopid, @RequestBody Shops shops){
+       userService.sessionCheck();
         try{
         service.updateshop(shopid,shops);
 
@@ -56,6 +63,7 @@ public class ShopController {
     @GetMapping("/shops/my")
     @PreAuthorize("hasRole('ROLE_SELLER')")
     public List<Shops> myshops(){
+        userService.sessionCheck();
         return service.myshop();
     }
 }

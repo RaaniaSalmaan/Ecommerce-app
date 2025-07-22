@@ -29,10 +29,11 @@ public class SecurityConfig  {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity sec) throws Exception{
         sec.csrf(AbstractHttpConfigurer::disable);
-        sec.authorizeHttpRequests(r -> r.requestMatchers("/shops","/products").permitAll()); // /shops and /products are public URL, rest of them requires authentication
+        sec.authorizeHttpRequests(r -> r.requestMatchers("/shops","/products","/auth/register","/auth/login").permitAll()); // /shops and /products are public URL, rest of them requires authentication
         sec.authorizeHttpRequests(request->request.anyRequest().authenticated());
         sec.formLogin(Customizer.withDefaults());
         sec.httpBasic(Customizer.withDefaults());
+        sec.sessionManagement(session -> session.maximumSessions(1));
         return sec.build();
     }
     @Bean

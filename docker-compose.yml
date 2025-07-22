@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mysql_container:
+    image: mysql:8.0
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Zaraumer#007
+      MYSQL_DATABASE: learning
+      MYSQL_USER: user
+      MYSQL_PASSWORD: Zaraumer#007
+
+    volumes:
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
+    ports:
+      - "3307:3306"
+
+  spring_app:
+    build: .
+    container_name: Ecommerce_app
+    depends_on:
+      - mysql_container
+    ports:
+      - "8080:8080"
