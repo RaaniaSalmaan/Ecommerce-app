@@ -32,9 +32,9 @@ public class ShopController {
     public ResponseEntity addShop(@RequestBody Shops shop) {
         try {
             service.addShop(shop);
-            return ResponseEntity.ok("✅ Shop added successfully!");
+            return ResponseEntity.ok(" Shop added successfully!");
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ ERROR: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(" ERROR: " + e.getMessage());
         }
     }
     @DeleteMapping("/shop/{shopid}")
@@ -48,9 +48,9 @@ public class ShopController {
         try{
         service.updateshop(shopid,shops);
 
-            return ResponseEntity.ok("✅ Shop updated successfully!");
+            return ResponseEntity.ok(" Shop updated successfully!");
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ ERROR: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(" ERROR: " + e.getMessage());
         }
     }
     @GetMapping("/shops/my")
